@@ -187,7 +187,11 @@
 
 <div id="addAssetModal" class="modal">
 
-    <div class="modal-backdrop" data-close-add-modal onclick="closeAddAssetModal()"></div>
+    <div
+        class="modal-backdrop"
+        data-close-add-modal
+        onclick="document.getElementById('addAssetModal').classList.remove('show'); document.body.classList.remove('modal-open');"
+    ></div>
 
     <div class="modal-panel">
 
@@ -202,7 +206,7 @@
                 type="button"
                 class="modal-close"
                 data-close-add-modal
-                onclick="closeAddAssetModal()"
+                onclick="document.getElementById('addAssetModal').classList.remove('show'); document.body.classList.remove('modal-open');"
             >
                 ×
             </button>
@@ -557,7 +561,7 @@
                     type="button"
                     class="btn-secondary"
                     data-close-add-modal
-                    onclick="closeAddAssetModal()"
+                    onclick="document.getElementById('addAssetModal').classList.remove('show'); document.body.classList.remove('modal-open');"
                 >
                     取消
                 </button>
