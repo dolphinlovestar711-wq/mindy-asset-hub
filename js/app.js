@@ -1532,18 +1532,18 @@ function openAddAssetModal() {
 function closeAddAssetModal() {
 
     const modal =
-        document.querySelector(
-            "#addAssetModal"
-        );
+        document.querySelector("#addAssetModal");
 
-    if (!modal) return;
+    if (!modal) {
+        console.error("找不到 #addAssetModal");
+        return;
+    }
 
+    modal.classList.remove("show");
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
 
-    document.body.classList.remove(
-        "modal-open"
-    );
+    document.body.classList.remove("modal-open");
 
 }
 
