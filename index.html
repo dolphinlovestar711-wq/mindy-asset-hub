@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=20260818-2352" />
 </head>
 <body>
   <div class="app-shell">
@@ -174,11 +174,31 @@
     </main>
   </div>
 
-  <div class="overlay hidden" id="overlay"></div>
+  <div class="overlay" id="drawerOverlay"></div>
 
-  <aside class="detail-drawer" id="detailDrawer" aria-hidden="true">
-    <button class="drawer-close" id="drawerClose" aria-label="關閉">✕</button>
-    <div id="drawerContent"></div>
+  <aside class="detail-drawer" id="assetDrawer" aria-hidden="true">
+    <button class="drawer-close" type="button" data-close-drawer aria-label="關閉">✕</button>
+    <div class="drawer-preview" data-drawer-preview></div>
+    <div class="drawer-body">
+      <h2 data-drawer-title></h2>
+      <div class="detail-list">
+        <div class="detail-item"><strong>類型</strong><span data-drawer-type></span></div>
+        <div class="detail-item"><strong>專案</strong><span data-drawer-project></span></div>
+        <div class="detail-item"><strong>尺寸</strong><span data-drawer-size></span></div>
+        <div class="detail-item"><strong>格式</strong><span data-drawer-format></span></div>
+        <div class="detail-item"><strong>建立日期</strong><span data-drawer-created></span></div>
+        <div class="detail-item"><strong>平台</strong><span data-drawer-platform></span></div>
+        <div class="detail-item"><strong>檔案位置</strong><span class="drawer-file-path" data-drawer-file></span></div>
+        <div class="detail-item"><strong>標籤</strong><span data-drawer-tags></span></div>
+        <div class="detail-item"><strong>備註</strong><span data-drawer-note></span></div>
+      </div>
+      <div class="drawer-actions">
+        <button class="secondary-btn" type="button" data-drawer-favorite>♡ 收藏</button>
+        <button class="secondary-btn" type="button" data-drawer-copy>複製路徑</button>
+        <button class="primary-btn" type="button" data-drawer-open-location>開啟檔案位置</button>
+        <button class="secondary-btn" type="button" data-drawer-download>下載素材</button>
+      </div>
+    </div>
   </aside>
 
 <!-- =========================
@@ -474,13 +494,13 @@
             <div class="form-group">
 
                 <label>
-                    素材圖片路徑 / 網址
+                    素材檔案／資料夾路徑或網址
                 </label>
 
                 <input
                     type="text"
                     name="file"
-                    placeholder="例如：assets/images/pet.png"
+                    placeholder="例如：D:\MINDY data\桌面\果果貼圖"
                 >
 
             </div>
@@ -578,6 +598,6 @@
 
 </div>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=20260818-2352"></script>
 </body>
 </html>

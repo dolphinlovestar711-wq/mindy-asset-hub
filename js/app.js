@@ -529,7 +529,11 @@ function renderAssets() {
                 <article
                     class="asset-card"
                     data-id="${escapeHTML(asset.id)}"
+                    role="button"
+                    tabindex="0"
+                    aria-label="查看素材：${title}"
                     onclick="openAssetDrawer('${escapeJS(asset.id)}')"
+                    onkeydown="handleAssetCardKeydown(event, '${escapeJS(asset.id)}')"
                 >
 
                     <div class="asset-preview">
@@ -604,13 +608,27 @@ function renderAssets() {
                             ${tags}
                         </div>
 
+                        <button
+                            class="asset-detail-button"
+                            type="button"
+                            onclick="event.stopPropagation(); openAssetDrawer('${escapeJS(asset.id)}')"
+                        >
+                            查看詳細資料
+                        </button>
+
                         ${
                             asset.project
 
                             ? `
-                                <div class="asset-project">
+                                <button
+                                    class="asset-project"
+                                    type="button"
+                                    title="查看「${escapeHTML(asset.project)}」專案的素材"
+                                    aria-label="查看 ${escapeHTML(asset.project)} 專案的素材"
+                                    onclick="openAssetProject('${escapeJS(asset.project)}', event)"
+                                >
                                     📁 ${escapeHTML(asset.project)}
-                                </div>
+                                </button>
                             `
 
                             : ""
@@ -626,6 +644,38 @@ function renderAssets() {
 
 
     updateAssetCount(filteredAssets.length);
+
+}
+
+
+/*
+素材卡片可用 Enter / Space 開啟詳細資料。
+*/
+function handleAssetCardKeydown(event, assetId) {
+
+    if (event.target !== event.currentTarget) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openAssetDrawer(assetId);
+    }
+
+}
+
+
+/*
+由素材卡片直接前往所屬專案，並阻止卡片同時開啟詳細側欄。
+*/
+function openAssetProject(project, event) {
+
+    if (event) event.stopPropagation();
+
+    selectProject(project);
+
+    const libraryView = document.querySelector("#libraryView");
+    if (libraryView) {
+        libraryView.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 
 }
 
@@ -1182,9 +1232,14 @@ function openAssetDrawer(id) {
     if (!drawer) return;
 
 
+    const fileLooksLikeImage =
+        /\.(avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i.test(
+            String(asset.file || "")
+        );
+
     const image =
-        asset.file ||
         asset.thumbnail ||
+        (fileLooksLikeImage ? asset.file : "") ||
         "";
 
 
@@ -1283,6 +1338,12 @@ function openAssetDrawer(id) {
 
     setDrawerText(
         drawer,
+        "file",
+        asset.file || "尚未設定"
+    );
+
+    setDrawerText(
+        drawer,
         "note",
         asset.note || "尚未設定備註"
     );
@@ -1337,7 +1398,11 @@ function openAssetDrawer(id) {
 
     if (downloadButton) {
 
-        if (asset.file) {
+        const fileCanDownload =
+            asset.file &&
+            /\.[a-zA-Z0-9]{1,8}(?:[?#].*)?$/.test(asset.file);
+
+        if (fileCanDownload) {
 
             downloadButton.style.display = "";
 
@@ -1402,7 +1467,29 @@ function openAssetDrawer(id) {
     }
 
 
+    /*
+    開啟本機檔案／資料夾位置或網路網址
+    */
+    const openLocationButton =
+        drawer.querySelector(
+            "[data-drawer-open-location]"
+        );
+
+    if (openLocationButton) {
+
+        openLocationButton.style.display =
+            asset.file ? "" : "none";
+
+        openLocationButton.onclick = () => {
+            if (!asset.file) return;
+            openAssetLocation(asset.file);
+        };
+
+    }
+
+
     drawer.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
 
     if (overlay) {
         overlay.classList.add("show");
@@ -1411,6 +1498,39 @@ function openAssetDrawer(id) {
     document.body.classList.add(
         "drawer-open"
     );
+
+}
+
+
+/*
+Windows 本機路徑轉換為瀏覽器可辨識的 file URL。
+瀏覽器若因安全政策阻擋，會顯示可複製的原始路徑。
+*/
+function openAssetLocation(path) {
+
+    const originalPath = String(path || "").trim();
+    if (!originalPath) return;
+
+    let target = originalPath;
+
+    if (/^[a-zA-Z]:[\\/]/.test(originalPath)) {
+        target = "file:///" + originalPath
+            .replace(/\\/g, "/")
+            .split("/")
+            .map((part, index) => index === 0 ? part : encodeURIComponent(part))
+            .join("/");
+    }
+
+    const opened = window.open(target, "_blank");
+
+    if (opened) opened.opener = null;
+
+    if (!opened) {
+        alert(
+            "瀏覽器基於安全限制，無法直接開啟本機位置。請複製後貼到檔案總管：\n" +
+            originalPath
+        );
+    }
 
 }
 
@@ -1451,6 +1571,7 @@ function closeAssetDrawer() {
 
     if (drawer) {
         drawer.classList.remove("open");
+        drawer.setAttribute("aria-hidden", "true");
     }
 
     if (overlay) {
@@ -2202,6 +2323,12 @@ window.toggleFavorite =
 
 window.openAssetDrawer =
     openAssetDrawer;
+
+window.handleAssetCardKeydown =
+    handleAssetCardKeydown;
+
+window.openAssetProject =
+    openAssetProject;
 
 window.closeAssetDrawer =
     closeAssetDrawer;
