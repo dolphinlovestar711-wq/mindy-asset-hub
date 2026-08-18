@@ -181,59 +181,399 @@
     <div id="drawerContent"></div>
   </aside>
 
-  <div class="modal hidden" id="assetModal" role="dialog" aria-modal="true" aria-labelledby="assetModalTitle">
-    <div class="modal-card">
-      <button class="modal-close" id="modalClose" aria-label="關閉">✕</button>
-      <div class="modal-head">
-        <p class="eyebrow">NEW ASSET</p>
-        <h2 id="assetModalTitle">新增素材</h2>
-        <p>此 MVP 會把新素材暫存在瀏覽器 localStorage。</p>
-      </div>
-      <form id="assetForm">
-        <label>素材名稱
-          <input required name="title" placeholder="例如：情人節寵物禮盒主視覺" />
-        </label>
-        <div class="form-row">
-          <label>素材類型
-            <select name="type" required>
-              <option value="image">圖片</option>
-              <option value="video">影片</option>
-              <option value="logo">Logo</option>
-              <option value="sticker">LINE 貼圖</option>
-              <option value="banner">Banner</option>
-            </select>
-          </label>
-          <label>專案
-            <input name="project" placeholder="例如：Pet Paradise" />
-          </label>
+<!-- =========================
+     新增素材 Modal
+========================= -->
+
+<div id="addAssetModal" class="modal hidden">
+
+    <div class="modal-backdrop" data-close-add-modal></div>
+
+    <div class="modal-panel">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>新增素材</h2>
+                <p>建立新的素材資料</p>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-add-modal
+            >
+                ×
+            </button>
+
         </div>
-        <div class="form-row">
-          <label>寬度 px
-            <input name="width" type="number" min="1" placeholder="1080" />
-          </label>
-          <label>高度 px
-            <input name="height" type="number" min="1" placeholder="1080" />
-          </label>
-        </div>
-        <label>平台
-          <input name="platform" placeholder="Facebook, Instagram" />
-        </label>
-        <label>標籤
-          <input name="tags" placeholder="寵物, 情人節, 促銷" />
-        </label>
-        <label>圖片網址或相對路徑
-          <input name="file" placeholder="assets/images/your-image.jpg" />
-        </label>
-        <label>備註
-          <textarea name="note" rows="3" placeholder="素材用途、版本或注意事項"></textarea>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="secondary-btn" id="modalCancel">取消</button>
-          <button type="submit" class="primary-btn">新增素材</button>
-        </div>
-      </form>
+
+
+        <form id="addAssetForm">
+
+            <!-- 素材名稱 -->
+            <div class="form-group">
+
+                <label for="assetTitle">
+                    素材名稱 *
+                </label>
+
+                <input
+                    id="assetTitle"
+                    type="text"
+                    name="title"
+                    placeholder="例如：情人節寵物主視覺"
+                    required
+                >
+
+            </div>
+
+
+            <!-- 素材類型 -->
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        素材類型
+                    </label>
+
+                    <select name="type">
+
+                        <option value="image">
+                            圖片
+                        </option>
+
+                        <option value="video">
+                            影片
+                        </option>
+
+                        <option value="logo">
+                            Logo
+                        </option>
+
+                        <option value="sticker">
+                            LINE 貼圖
+                        </option>
+
+                        <option value="banner">
+                            Banner
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        分類
+                    </label>
+
+                    <select name="category">
+
+                        <option value="圖片">
+                            圖片
+                        </option>
+
+                        <option value="影片">
+                            影片
+                        </option>
+
+                        <option value="Logo">
+                            Logo
+                        </option>
+
+                        <option value="LINE貼圖">
+                            LINE 貼圖
+                        </option>
+
+                        <option value="Banner">
+                            Banner
+                        </option>
+
+                        <option value="社群素材">
+                            社群素材
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- 專案 -->
+            <div class="form-group">
+
+                <label>
+                    專案
+                </label>
+
+                <input
+                    type="text"
+                    name="project"
+                    placeholder="例如：Pet Paradise"
+                >
+
+            </div>
+
+
+            <!-- 平台 -->
+            <div class="form-group">
+
+                <label>
+                    使用平台
+                </label>
+
+                <div class="checkbox-group">
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="platform"
+                            value="Facebook"
+                        >
+                        Facebook
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="platform"
+                            value="Instagram"
+                        >
+                        Instagram
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="platform"
+                            value="LINE"
+                        >
+                        LINE
+                    </label>
+
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="platform"
+                            value="YouTube"
+                        >
+                        YouTube
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- 標籤 -->
+            <div class="form-group">
+
+                <label>
+                    標籤
+                </label>
+
+                <input
+                    type="text"
+                    name="tags"
+                    placeholder="例如：寵物, 情人節, 可愛"
+                >
+
+                <small>
+                    多個標籤請用逗號分隔
+                </small>
+
+            </div>
+
+
+            <!-- 尺寸 -->
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        寬度
+                    </label>
+
+                    <input
+                        type="number"
+                        name="width"
+                        placeholder="1080"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        高度
+                    </label>
+
+                    <input
+                        type="number"
+                        name="height"
+                        placeholder="1080"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- 格式 -->
+            <div class="form-group">
+
+                <label>
+                    檔案格式
+                </label>
+
+                <select name="format">
+
+                    <option value="PNG">
+                        PNG
+                    </option>
+
+                    <option value="JPG">
+                        JPG
+                    </option>
+
+                    <option value="WEBP">
+                        WEBP
+                    </option>
+
+                    <option value="GIF">
+                        GIF
+                    </option>
+
+                    <option value="MP4">
+                        MP4
+                    </option>
+
+                    <option value="APNG">
+                        APNG
+                    </option>
+
+                    <option value="SVG">
+                        SVG
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- 素材圖片網址 -->
+            <div class="form-group">
+
+                <label>
+                    素材圖片路徑 / 網址
+                </label>
+
+                <input
+                    type="text"
+                    name="file"
+                    placeholder="例如：assets/images/pet.png"
+                >
+
+            </div>
+
+
+            <!-- 縮圖 -->
+            <div class="form-group">
+
+                <label>
+                    縮圖路徑
+                </label>
+
+                <input
+                    type="text"
+                    name="thumbnail"
+                    placeholder="例如：assets/thumbnails/pet.jpg"
+                >
+
+            </div>
+
+
+            <!-- 狀態 -->
+            <div class="form-group">
+
+                <label>
+                    素材狀態
+                </label>
+
+                <select name="status">
+
+                    <option value="draft">
+                        草稿
+                    </option>
+
+                    <option value="review">
+                        待確認
+                    </option>
+
+                    <option value="ready">
+                        可使用
+                    </option>
+
+                    <option value="published">
+                        已發布
+                    </option>
+
+                    <option value="archived">
+                        已封存
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- 備註 -->
+            <div class="form-group">
+
+                <label>
+                    備註
+                </label>
+
+                <textarea
+                    name="note"
+                    rows="4"
+                    placeholder="例如：2026 情人節活動素材"
+                ></textarea>
+
+            </div>
+
+
+            <!-- 按鈕 -->
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="btn-secondary"
+                    data-close-add-modal
+                >
+                    取消
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    ＋ 新增素材
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
-  </div>
+
+</div>
 
   <script src="js/app.js"></script>
 </body>
