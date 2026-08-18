@@ -33,6 +33,7 @@ let currentProject = "all";
 let currentTag = "all";
 let currentSort = "newest";
 let searchKeyword = "";
+const selectedAssetIds = new Set();
 
 
 /* =========================================================
@@ -123,6 +124,13 @@ async function loadAssets() {
 
         assets = [...localAssets, ...assets];
 
+        const removedAssetIds =
+            JSON.parse(localStorage.getItem("mindyRemovedAssets")) || [];
+
+        assets = assets.filter(
+            asset => !removedAssetIds.includes(String(asset.id))
+        );
+
         console.log("素材載入完成：", assets.length);
 
     }
@@ -138,6 +146,13 @@ async function loadAssets() {
 
         assets =
             JSON.parse(localStorage.getItem("mindyCustomAssets")) || [];
+
+        const removedAssetIds =
+            JSON.parse(localStorage.getItem("mindyRemovedAssets")) || [];
+
+        assets = assets.filter(
+            asset => !removedAssetIds.includes(String(asset.id))
+        );
 
     }
 
@@ -527,7 +542,7 @@ function renderAssets() {
             return `
 
                 <article
-                    class="asset-card"
+                    class="asset-card ${selectedAssetIds.has(String(asset.id)) ? "asset-selected" : ""}"
                     data-id="${escapeHTML(asset.id)}"
                     role="button"
                     tabindex="0"
@@ -535,6 +550,20 @@ function renderAssets() {
                     onclick="openAssetDrawer('${escapeJS(asset.id)}')"
                     onkeydown="handleAssetCardKeydown(event, '${escapeJS(asset.id)}')"
                 >
+
+                    <label
+                        class="asset-select ${selectedAssetIds.has(String(asset.id)) ? "selected" : ""}"
+                        title="選取此素材"
+                        onclick="event.stopPropagation()"
+                    >
+                        <input
+                            type="checkbox"
+                            aria-label="選取素材：${title}"
+                            ${selectedAssetIds.has(String(asset.id)) ? "checked" : ""}
+                            onchange="toggleAssetSelection('${escapeJS(asset.id)}', this, event)"
+                        >
+                        <span aria-hidden="true">✓</span>
+                    </label>
 
                     <div class="asset-preview">
 
@@ -644,6 +673,44 @@ function renderAssets() {
 
 
     updateAssetCount(filteredAssets.length);
+    updateClearFiltersButton();
+
+}
+
+
+function toggleAssetSelection(assetId, checkbox, event) {
+
+    if (event) event.stopPropagation();
+
+    const id = String(assetId);
+
+    if (checkbox.checked) {
+        selectedAssetIds.add(id);
+    } else {
+        selectedAssetIds.delete(id);
+    }
+
+    const selector = checkbox.closest(".asset-select");
+    if (selector) selector.classList.toggle("selected", checkbox.checked);
+
+    const card = checkbox.closest(".asset-card");
+    if (card) card.classList.toggle("asset-selected", checkbox.checked);
+
+    updateClearFiltersButton();
+
+}
+
+
+function updateClearFiltersButton() {
+
+    const button = document.querySelector("#clearFilters");
+    if (!button) return;
+
+    button.textContent = selectedAssetIds.size
+        ? `移除已選素材 (${selectedAssetIds.size})`
+        : "清除篩選";
+
+    button.classList.toggle("remove-selected", selectedAssetIds.size > 0);
 
 }
 
@@ -1077,6 +1144,9 @@ function setupSearch() {
 ========================================================= */
 
 function setupFilters() {
+
+    const clearButton = document.querySelector("#clearFilters");
+    if (clearButton) clearButton.addEventListener("click", clearFilters);
 
     /*
     類型
@@ -2227,6 +2297,48 @@ function toggleSidebar() {
 
 function clearFilters() {
 
+    if (selectedAssetIds.size > 0) {
+
+        const removedIds = [...selectedAssetIds];
+        const removedIdSet = new Set(removedIds);
+
+        assets = assets.filter(
+            asset => !removedIdSet.has(String(asset.id))
+        );
+
+        const localAssets =
+            JSON.parse(localStorage.getItem("mindyCustomAssets")) || [];
+
+        localStorage.setItem(
+            "mindyCustomAssets",
+            JSON.stringify(
+                localAssets.filter(
+                    asset => !removedIdSet.has(String(asset.id))
+                )
+            )
+        );
+
+        const savedRemovedIds =
+            JSON.parse(localStorage.getItem("mindyRemovedAssets")) || [];
+
+        localStorage.setItem(
+            "mindyRemovedAssets",
+            JSON.stringify([...new Set([...savedRemovedIds, ...removedIds])])
+        );
+
+        const favoriteIds = getFavoriteIds().filter(
+            id => !removedIdSet.has(String(id))
+        );
+
+        localStorage.setItem(
+            "mindyFavoriteAssets",
+            JSON.stringify(favoriteIds)
+        );
+
+        selectedAssetIds.clear();
+
+    }
+
     currentType = "all";
     currentPlatform = "all";
     currentSize = "all";
@@ -2329,6 +2441,9 @@ window.handleAssetCardKeydown =
 
 window.openAssetProject =
     openAssetProject;
+
+window.toggleAssetSelection =
+    toggleAssetSelection;
 
 window.closeAssetDrawer =
     closeAssetDrawer;
