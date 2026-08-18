@@ -1,73 +1,234 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Mindy 的素材整理網站">
-  <title>Mindy 素材整理網站</title>
-  <style>
-    :root {
-      color-scheme: light;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f7f3ee;
-      color: #292522;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      min-height: 100vh;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at top left, #f7d9c4 0, transparent 34%),
-        radial-gradient(circle at bottom right, #cde7df 0, transparent 36%),
-        #f7f3ee;
-    }
-
-    main {
-      width: min(680px, 100%);
-      padding: clamp(36px, 8vw, 72px);
-      border: 1px solid rgba(41, 37, 34, 0.12);
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.78);
-      box-shadow: 0 24px 70px rgba(70, 59, 48, 0.12);
-      backdrop-filter: blur(12px);
-    }
-
-    .tag {
-      display: inline-block;
-      margin-bottom: 18px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #292522;
-      color: #fff;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-    }
-
-    h1 {
-      margin: 0 0 16px;
-      font-size: clamp(36px, 8vw, 68px);
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-    }
-
-    p {
-      margin: 0;
-      color: #665d56;
-      font-size: clamp(16px, 2.5vw, 20px);
-      line-height: 1.8;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Mindy Asset Hub - 個人行銷素材管理中心" />
+  <title>Mindy Asset Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <main>
-    <span class="tag">MINDY ASSET HUB</span>
-    <h1>素材整理網站</h1>
-    <p>網站已成功上線。你可以從這裡開始整理、展示與管理自己的素材。</p>
-  </main>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div>
+          <h1>Mindy Asset Hub</h1>
+          <p>素材管理中心</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">🏠 <span>儀表板</span></button>
+        <button class="nav-item" data-view="all">📁 <span>全部素材</span></button>
+        <button class="nav-item" data-view="favorites">❤️ <span>我的收藏</span></button>
+        <button class="nav-item" data-view="recent">🕘 <span>最近新增</span></button>
+
+        <div class="nav-group-title">素材分類</div>
+        <button class="nav-item" data-type-filter="image">🖼️ <span>圖片</span></button>
+        <button class="nav-item" data-type-filter="video">🎬 <span>影片</span></button>
+        <button class="nav-item" data-type-filter="logo">🔷 <span>Logo</span></button>
+        <button class="nav-item" data-type-filter="sticker">💬 <span>LINE 貼圖</span></button>
+        <button class="nav-item" data-type-filter="banner">🪧 <span>Banner</span></button>
+
+        <div class="nav-group-title">管理</div>
+        <button class="nav-item" data-view="projects">📂 <span>專案</span></button>
+        <button class="nav-item" data-view="tags">🏷️ <span>標籤</span></button>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="開啟選單">☰</button>
+        <div class="search-wrap">
+          <span>🔍</span>
+          <input id="globalSearch" type="search" placeholder="搜尋素材名稱、標籤、專案、平台…" />
+        </div>
+        <button class="primary-btn" id="addAssetBtn">＋ 新增素材</button>
+      </header>
+
+      <section id="dashboardView" class="view active-view">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">ASSET OVERVIEW</p>
+            <h2>歡迎回來，Mindy 👋</h2>
+            <p class="subtext">把素材從「我記得好像在哪」變成「三秒就找到」。</p>
+          </div>
+          <div class="date-badge" id="todayLabel"></div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="section-head">
+          <div>
+            <h3>最近新增</h3>
+            <p>近期加入的素材會出現在這裡。</p>
+          </div>
+          <button class="text-btn" data-view-jump="recent">查看全部 →</button>
+        </div>
+        <div class="asset-grid compact" id="recentGrid"></div>
+
+        <div class="dashboard-split">
+          <section class="panel">
+            <div class="section-head compact-head">
+              <div>
+                <h3>常用標籤</h3>
+                <p>快速進入最常使用的分類。</p>
+              </div>
+            </div>
+            <div class="tag-cloud" id="tagCloud"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head compact-head">
+              <div>
+                <h3>最近專案</h3>
+                <p>依工作主題管理素材。</p>
+              </div>
+            </div>
+            <div class="project-list" id="projectList"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="libraryView" class="view">
+        <div class="section-head library-title">
+          <div>
+            <p class="eyebrow">ASSET LIBRARY</p>
+            <h2 id="libraryTitle">全部素材</h2>
+            <p id="librarySubtitle">集中瀏覽、篩選與管理你的所有素材。</p>
+          </div>
+          <div class="asset-count" id="assetCount">0 個素材</div>
+        </div>
+
+        <div class="filter-bar">
+          <select id="typeFilter">
+            <option value="all">全部類型</option>
+            <option value="image">圖片</option>
+            <option value="video">影片</option>
+            <option value="logo">Logo</option>
+            <option value="sticker">LINE 貼圖</option>
+            <option value="banner">Banner</option>
+          </select>
+          <select id="platformFilter">
+            <option value="all">全部平台</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Instagram">Instagram</option>
+            <option value="LINE">LINE</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Website">Website</option>
+          </select>
+          <select id="ratioFilter">
+            <option value="all">全部尺寸</option>
+            <option value="1:1">1:1</option>
+            <option value="9:16">9:16</option>
+            <option value="16:9">16:9</option>
+            <option value="other">其他</option>
+          </select>
+          <select id="sortFilter">
+            <option value="newest">最新加入</option>
+            <option value="oldest">最早加入</option>
+            <option value="name">名稱排序</option>
+          </select>
+          <button class="secondary-btn" id="clearFilters">清除篩選</button>
+        </div>
+
+        <div class="asset-grid" id="assetGrid"></div>
+        <div class="empty-state hidden" id="emptyState">
+          <div class="empty-icon">🗂️</div>
+          <h3>目前沒有符合條件的素材</h3>
+          <p>換個關鍵字或清除篩選，再試一次。</p>
+        </div>
+      </section>
+
+      <section id="projectsView" class="view">
+        <div class="section-head library-title">
+          <div>
+            <p class="eyebrow">PROJECTS</p>
+            <h2>專案管理</h2>
+            <p>以品牌、活動或工作主題整理素材。</p>
+          </div>
+        </div>
+        <div class="project-grid" id="projectGrid"></div>
+      </section>
+
+      <section id="tagsView" class="view">
+        <div class="section-head library-title">
+          <div>
+            <p class="eyebrow">TAGS</p>
+            <h2>標籤管理</h2>
+            <p>使用標籤橫跨不同專案與素材類型。</p>
+          </div>
+        </div>
+        <div class="tag-manager" id="tagManager"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="overlay hidden" id="overlay"></div>
+
+  <aside class="detail-drawer" id="detailDrawer" aria-hidden="true">
+    <button class="drawer-close" id="drawerClose" aria-label="關閉">✕</button>
+    <div id="drawerContent"></div>
+  </aside>
+
+  <div class="modal hidden" id="assetModal" role="dialog" aria-modal="true" aria-labelledby="assetModalTitle">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="關閉">✕</button>
+      <div class="modal-head">
+        <p class="eyebrow">NEW ASSET</p>
+        <h2 id="assetModalTitle">新增素材</h2>
+        <p>此 MVP 會把新素材暫存在瀏覽器 localStorage。</p>
+      </div>
+      <form id="assetForm">
+        <label>素材名稱
+          <input required name="title" placeholder="例如：情人節寵物禮盒主視覺" />
+        </label>
+        <div class="form-row">
+          <label>素材類型
+            <select name="type" required>
+              <option value="image">圖片</option>
+              <option value="video">影片</option>
+              <option value="logo">Logo</option>
+              <option value="sticker">LINE 貼圖</option>
+              <option value="banner">Banner</option>
+            </select>
+          </label>
+          <label>專案
+            <input name="project" placeholder="例如：Pet Paradise" />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>寬度 px
+            <input name="width" type="number" min="1" placeholder="1080" />
+          </label>
+          <label>高度 px
+            <input name="height" type="number" min="1" placeholder="1080" />
+          </label>
+        </div>
+        <label>平台
+          <input name="platform" placeholder="Facebook, Instagram" />
+        </label>
+        <label>標籤
+          <input name="tags" placeholder="寵物, 情人節, 促銷" />
+        </label>
+        <label>圖片網址或相對路徑
+          <input name="file" placeholder="assets/images/your-image.jpg" />
+        </label>
+        <label>備註
+          <textarea name="note" rows="3" placeholder="素材用途、版本或注意事項"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" id="modalCancel">取消</button>
+          <button type="submit" class="primary-btn">新增素材</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
 </body>
 </html>
