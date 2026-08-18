@@ -247,6 +247,8 @@ function applyFilters() {
             asset.category,
             asset.project,
             asset.format,
+            asset.file,
+            asset.thumbnail,
             asset.note,
             ...(asset.tags || []),
             ...(asset.platform || [])
@@ -959,7 +961,7 @@ function setupSearch() {
 
     const searchInputs =
         document.querySelectorAll(
-            "#searchInput, [data-search-input]"
+            "#globalSearch, #searchInput, [data-search-input]"
         );
 
     searchInputs.forEach(input => {
@@ -968,6 +970,48 @@ function setupSearch() {
 
             searchKeyword =
                 event.target.value.trim();
+
+            if (searchKeyword) {
+                const keyword = searchKeyword.toLowerCase();
+
+                const matchingAsset = assets.find(asset => {
+                    const values = [
+                        asset.project,
+                        asset.title,
+                        asset.name,
+                        asset.file,
+                        asset.thumbnail
+                    ];
+
+                    return values
+                        .filter(Boolean)
+                        .some(value =>
+                            String(value).toLowerCase().includes(keyword)
+                        );
+                });
+
+                currentProject = matchingAsset?.project || "all";
+                currentType = "all";
+                currentPlatform = "all";
+                currentSize = "all";
+
+                showCurrentView("libraryView");
+
+                const title = document.querySelector("#libraryTitle");
+                const subtitle = document.querySelector("#librarySubtitle");
+
+                if (title) {
+                    title.textContent = matchingAsset?.project
+                        ? matchingAsset.project
+                        : `搜尋：${searchKeyword}`;
+                }
+
+                if (subtitle) {
+                    subtitle.textContent = matchingAsset?.project
+                        ? `顯示「${matchingAsset.project}」專案中符合「${searchKeyword}」的素材。`
+                        : `顯示符合「${searchKeyword}」的全部素材。`;
+                }
+            }
 
             applyFilters();
 
