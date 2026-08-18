@@ -1767,6 +1767,28 @@ function setupAddAssetForm() {
 function setupNavigation() {
 
     document
+        .querySelectorAll("[data-view-jump='all']")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+                selectProject("all");
+
+                document.querySelectorAll(".nav-item").forEach(item => {
+                    item.classList.remove("active");
+                });
+
+                const allAssetsButton = document.querySelector(
+                    ".nav-item[data-view='all']"
+                );
+
+                if (allAssetsButton) {
+                    allAssetsButton.classList.add("active");
+                }
+            });
+
+        });
+
+    document
         .querySelectorAll(".nav-item[data-view]")
         .forEach(button => {
 
