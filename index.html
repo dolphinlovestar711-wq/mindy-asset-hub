@@ -187,7 +187,7 @@
 
 <div id="addAssetModal" class="modal">
 
-    <div class="modal-backdrop" data-close-add-modal></div>
+    <div class="modal-backdrop" data-close-add-modal onclick="closeAddAssetModal()"></div>
 
     <div class="modal-panel">
 
@@ -202,6 +202,7 @@
                 type="button"
                 class="modal-close"
                 data-close-add-modal
+                onclick="closeAddAssetModal()"
             >
                 ×
             </button>
@@ -556,6 +557,7 @@
                     type="button"
                     class="btn-secondary"
                     data-close-add-modal
+                    onclick="closeAddAssetModal()"
                 >
                     取消
                 </button>
