@@ -829,8 +829,43 @@ function renderProjects() {
 function selectProject(project) {
 
     currentProject = project;
+    currentTag = "all";
+    currentType = "all";
+    currentPlatform = "all";
+    currentSize = "all";
+    searchKeyword = "";
+
+    const searchInput = document.querySelector("#globalSearch");
+    if (searchInput) searchInput.value = "";
+
+    showCurrentView("libraryView");
+
+    const title = document.querySelector("#libraryTitle");
+    const subtitle = document.querySelector("#librarySubtitle");
+
+    if (title) {
+        title.textContent = project === "all" ? "全部素材" : project;
+    }
+
+    if (subtitle) {
+        subtitle.textContent = project === "all"
+            ? "集中瀏覽、篩選與管理你的所有素材。"
+            : `瀏覽「${project}」專案中已儲存的素材。`;
+    }
 
     applyFilters();
+
+}
+
+
+function showCurrentView(viewId) {
+
+    document.querySelectorAll(".view").forEach(view => {
+        view.classList.remove("active-view");
+    });
+
+    const target = document.getElementById(viewId);
+    if (target) target.classList.add("active-view");
 
 }
 
@@ -1730,6 +1765,54 @@ function setupAddAssetForm() {
 ========================================================= */
 
 function setupNavigation() {
+
+    document
+        .querySelectorAll(".nav-item[data-view]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const view = button.dataset.view;
+
+                document.querySelectorAll(".nav-item").forEach(item => {
+                    item.classList.remove("active");
+                });
+                button.classList.add("active");
+
+                if (view === "dashboard") {
+                    showCurrentView("dashboardView");
+                    currentProject = "all";
+                    applyFilters();
+                    return;
+                }
+
+                if (view === "projects") {
+                    showCurrentView("projectsView");
+                    return;
+                }
+
+                if (view === "tags") {
+                    showCurrentView("tagsView");
+                    return;
+                }
+
+                selectProject("all");
+            });
+
+        });
+
+    document
+        .querySelectorAll(".nav-item[data-type-filter]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+                currentProject = "all";
+                currentType = button.dataset.typeFilter;
+                showCurrentView("libraryView");
+                applyFilters();
+            });
+
+        });
 
     document
         .querySelectorAll("[data-page]")
