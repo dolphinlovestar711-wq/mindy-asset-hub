@@ -1471,32 +1471,27 @@ function downloadAsset(asset) {
 
 function setupModal() {
 
-    document
-        .querySelectorAll(
+    document.addEventListener("click", event => {
+        const openButton = event.target.closest(
             "[data-open-add-modal], #addAssetButton"
-        )
-        .forEach(button => {
+        );
 
-            button.addEventListener(
-                "click",
-                openAddAssetModal
-            );
+        if (openButton) {
+            event.preventDefault();
+            openAddAssetModal();
+            return;
+        }
 
-        });
-
-
-    document
-        .querySelectorAll(
+        const closeButton = event.target.closest(
             "[data-close-add-modal]"
-        )
-        .forEach(button => {
+        );
 
-            button.addEventListener(
-                "click",
-                closeAddAssetModal
-            );
-
-        });
+        if (closeButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeAddAssetModal();
+        }
+    }, true);
 
 }
 
@@ -1520,7 +1515,8 @@ function openAddAssetModal() {
         return;
     }
 
-    modal.classList.add("show");
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
 
     document.body.classList.add(
         "modal-open"
@@ -1542,7 +1538,8 @@ function closeAddAssetModal() {
 
     if (!modal) return;
 
-    modal.classList.remove("show");
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
 
     document.body.classList.remove(
         "modal-open"

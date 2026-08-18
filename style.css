@@ -468,3 +468,16 @@ body.modal-open {
     }
 
 }
+
+/* Modal open/close state: keep this last to override legacy modal rules. */
+.modal {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.modal.is-open {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+}
